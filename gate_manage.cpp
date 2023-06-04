@@ -10,7 +10,7 @@
 
 using namespace std;
 
-int msgid1, msgid2;
+int msgid1, msgid2, msgid3;
 bool running = true;
 struct message_info termial_config;
 
@@ -33,9 +33,11 @@ int main (void)
 
 	msgid1 = msgget ((key_t)0001,0666 | IPC_CREAT);
     msgid2 = msgget ((key_t)0002,0666 | IPC_CREAT);
+    msgid2 = msgget ((key_t)0003, 0666 | IPC_CREAT);
 
 
-	if (msgid1 ==-1)
+
+	if (msgid1 ==-1 || msgid2 == -1 || msgid3 ==-1)
 	{
 		fprintf(stderr, "msgget faild with error: %d\n",errno);
 		exit(EXIT_FAILURE);
@@ -62,6 +64,9 @@ int main (void)
             break;
         case 2:
             changing_state(msgid2, new_speed, new_signal);
+            break;
+        case 3:
+            changing_state(msgid3, new_speed, new_signal);
             break;
         default:
             cout << "not correct terminal number " << endl;

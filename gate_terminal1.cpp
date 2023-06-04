@@ -7,39 +7,22 @@
 #include <time.h>
 #include "structure.h"
 #include <iostream>
+#include <pthread.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 using namespace std;
 
 int speed = 40;
 bool signal = true;
+struct message_info termial_info;
+struct message_info termial_config;
+int msgid1;
 
-int main (void)
-{
-	bool running = true;
-	struct message_info termial_info;
-    struct message_info termial_config;
 
-	int msgid1;
-
-	msgid1 = msgget ((key_t)0001,0666 | IPC_CREAT);
-
-	if (msgid1 ==-1)
-	{
-		fprintf(stderr, "msgget faild with error: %d\n",errno);
-		exit(EXIT_FAILURE);
-	}
-
-    pid_t terminal_pid = fork();
- 
-    if (terminal_pid == -1) { // если не удалось создать процесс, выводим сообщение об ошибке
-        perror("Error creating train process");
-        exit(EXIT_FAILURE);
-    }
-    // дочерний процесс - поезд, отправляем сигналы в родительский процесс
-    else if (terminal_pid == 0) {
-        while(true){
-            sleep(100/speed);
-            cout << "speed on send " << speed << endl;
+void* sending(void*){
+    while(true){
+            sleep(100 / speed);
             termial_info.my_msg_type = 1;
             termial_info.from = rand() % 2;
             termial_info.speed = speed;
@@ -51,29 +34,40 @@ int main (void)
                 }
             }
         }
-        exit(EXIT_SUCCESS);
-    }    
+}
 
-    // родительский процесс - принимае сообщения для конфигурации
-    else {
-        while (1) {
-            // sleep(1);
+int main (void)
+{
+	bool running = true;
+    msgid1 = msgget ((key_t)0001,0666 | IPC_CREAT);
+
+	if (msgid1 ==- 1)
+	{
+		fprintf(stderr, "msgget faild with error: %d\n",errno);
+		exit(EXIT_FAILURE);
+	}
+
+        pthread_t th1;
+        pthread_create(&th1, NULL, sending, NULL);
+
+    while (1) {
+        if(msgrcv(msgid1, &termial_config, sizeof(termial_config), 2, 0) != -1){
             cout << "-------------------------changing state------------------------------" << endl;
-            if(msgrcv(msgid1, &termial_config, sizeof(termial_config), 2, 0) != -1){
-                if(termial_config.speed < 0){
-                    cout << "get uncorrect speed value: " << termial_config.speed << endl;
-                }
-                else{
-                    speed = termial_config.speed;
-                    cout << "new value of speed = " << speed << endl;
-                }
-                
-                signal = termial_config.signal;
-            }
 
-            cout << "new value of foreing signal is" << (signal ? "on" : "off") << endl;
+            if(termial_config.speed < 0){
+                cout << "get uncorrect speed value: " << termial_config.speed << endl;
+            }
+            else{
+                speed = termial_config.speed;
+                cout << "new value of speed = " << speed << endl;
+            }
+            
+            signal = termial_config.signal;
+            cout << "new value of foreing signal is " << (signal ? "on" : "off") << endl;
 
         }
-    }	
-}
+
+
+    }
+}	
 
