@@ -19,7 +19,7 @@ void changing_state(int msg_id, int speed, bool signal){
     termial_config.speed = speed;
     termial_config.signal = signal;
 
-    if(msgsnd(msgid1, &termial_config, sizeof(termial_config), 0) == -1){
+    if(msgsnd(msg_id, &termial_config, sizeof(termial_config), 0) == -1){
             fprintf(stderr, "msgsnd faild\n");
             //exit (EXIT_FAILURE);    
     }
@@ -60,6 +60,7 @@ int main (void)
         switch (terminal_number)
         {
         case 1:
+            cout << "for 1" << endl;
             changing_state(msgid1, new_speed, new_signal);
             break;
         case 2:
