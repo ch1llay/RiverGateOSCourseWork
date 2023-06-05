@@ -24,10 +24,10 @@ void* monitoring(void* data){
 
 	while(true){
 		if(msgrcv(info->msgid, &termial_info, sizeof(termial_info), info->terminal_number*10, 0) != -1){
-				cout << "--------------------termainal " << info->terminal_number << ": ---------------------" << endl;
+				cout << "--------------------termainal " << info->terminal_number << ": opening-------------------" << endl;
 				cout << "sheep going from " << (termial_info.from == 1 ? "up" : "down") << endl;
-				cout << "with speed " << termial_info.speed << endl << "signal is " << (termial_info.signal ? "on" : "off") << endl;
-				cout << "--------------------end termainal " << info ->terminal_number << ": ---------------------" << endl << endl;
+				cout << "speed " << termial_info.speed << endl << "signal is " << (termial_info.signal ? "on" : "off") << endl;
+				cout << "--------------------termainal " << info ->terminal_number << ": closing---------------------" << endl << endl;
 			}
 	}
 }
