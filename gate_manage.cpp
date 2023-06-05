@@ -10,12 +10,11 @@
 
 using namespace std;
 
-int msgid1, msgid2, msgid3;
 bool running = true;
 struct message_info termial_config;
 
-void changing_state(int msg_id, int speed, bool signal){
-    termial_config.my_msg_type = 2;
+void changing_state(int msg_id, int speed, bool signal, int terminal_number){
+    termial_config.my_msg_type = terminal_number*10 + 1;
     termial_config.speed = speed;
     termial_config.signal = signal;
 
@@ -30,10 +29,11 @@ void changing_state(int msg_id, int speed, bool signal){
 int main (void)
 {
 	
+    int msgid1, msgid2, msgid3;
 
-	msgid1 = msgget ((key_t)0001,0666 | IPC_CREAT);
-    msgid2 = msgget ((key_t)0002,0666 | IPC_CREAT);
-    msgid2 = msgget ((key_t)0003, 0666 | IPC_CREAT);
+	msgid1 = msgget (100,0666 | IPC_CREAT);
+    msgid2 = msgget (200,0666 | IPC_CREAT);
+    msgid3 = msgget (300, 0666 | IPC_CREAT);
 
 
 
@@ -61,13 +61,13 @@ int main (void)
         {
         case 1:
             cout << "for 1" << endl;
-            changing_state(msgid1, new_speed, new_signal);
+            changing_state(msgid1, new_speed, new_signal, terminal_number);
             break;
         case 2:
-            changing_state(msgid2, new_speed, new_signal);
+            changing_state(msgid2, new_speed, new_signal, terminal_number);
             break;
         case 3:
-            changing_state(msgid3, new_speed, new_signal);
+            changing_state(msgid3, new_speed, new_signal, terminal_number);
             break;
         default:
             cout << "not correct terminal number " << endl;

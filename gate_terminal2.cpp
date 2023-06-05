@@ -13,7 +13,7 @@
 
 using namespace std;
 
-int speed = 40;
+int speed = 10;
 bool signal = true;
 struct message_info termial_info;
 struct message_info termial_config;
@@ -22,8 +22,8 @@ int msgid2;
 
 void* sending(void*){
     while(true){
-            sleep(100 / speed);
-            termial_info.my_msg_type = 1;
+            sleep(100/speed);
+            termial_info.my_msg_type = 20;
             termial_info.from = rand() % 2;
             termial_info.speed = speed;
             if(signal){
@@ -39,7 +39,7 @@ void* sending(void*){
 int main (void)
 {
 	bool running = true;
-    msgid2 = msgget ((key_t)0002,0666 | IPC_CREAT);
+    msgid2 = msgget (200,0666 | IPC_CREAT);
 
 	if (msgid2 ==- 1)
 	{
@@ -51,7 +51,7 @@ int main (void)
         pthread_create(&th1, NULL, sending, NULL);
 
     while (1) {
-        if(msgrcv(msgid2, &termial_config, sizeof(termial_config), 2, 0) != -1){
+        if(msgrcv(msgid2, &termial_config, sizeof(termial_config), 21, 0) != -1){
             cout << "-------------------------changing state------------------------------" << endl;
 
             if(termial_config.speed < 0){

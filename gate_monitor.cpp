@@ -23,14 +23,13 @@ void* monitoring(void* data){
 	monitoring_info* info = (monitoring_info*) data;
 
 	while(true){
-		sleep(1);
-	if(msgrcv(info->msgid, &termial_info, sizeof(termial_info), 1, 0) != -1){
-            cout << "--------------------termainal " << info->terminal_number << ": ---------------------" << endl;
-            cout << "sheep going from " << (termial_info.from == 1 ? "up" : "down") << endl;
-            cout << "with speed " << termial_info.speed << endl << "signal is " << (termial_info.signal ? "on" : "off") << endl;
-            cout << "--------------------end termainal " << info ->terminal_number << ": ---------------------" << endl << endl;
-        }
-		}
+		if(msgrcv(info->msgid, &termial_info, sizeof(termial_info), info->terminal_number*10, 0) != -1){
+				cout << "--------------------termainal " << info->terminal_number << ": ---------------------" << endl;
+				cout << "sheep going from " << (termial_info.from == 1 ? "up" : "down") << endl;
+				cout << "with speed " << termial_info.speed << endl << "signal is " << (termial_info.signal ? "on" : "off") << endl;
+				cout << "--------------------end termainal " << info ->terminal_number << ": ---------------------" << endl << endl;
+			}
+	}
 }
 int main (void)
 {
@@ -38,9 +37,9 @@ int main (void)
 
 	int msgid1, msgid2, msgid3;
 
-	msgid1 = msgget ((key_t)0001,0666 | IPC_CREAT);
-	msgid2 = msgget ((key_t)0002,0666 | IPC_CREAT);
-	msgid3 = msgget ((key_t)0003,0666 | IPC_CREAT);
+	msgid1 = msgget (100,0666 | IPC_CREAT);
+	msgid2 = msgget (200,0666 | IPC_CREAT);
+	msgid3 = msgget (300,0666 | IPC_CREAT);
 
 	pthread_t th1, th2, th3;
 	monitoring_info monitoring_info1;
